@@ -1,0 +1,77 @@
+def build_chain(filename):
+    chain = []
+    blocks_received = {}
+    votes_received = set()
+
+    with open(filename, 'r') as file:
+        header = file.readline()
+
+        for line in file:
+            line = line.strip()
+            parts = line.split(',')
+
+            row_type = parts[0]
+            block_id = parts[1]
+            vote_id = parts[2]
+            view = parts[3]
+
+            if row_type == 'block':
+                block = { 'id': block_id,
+                         'view':int(view) }
+                blocks_received[block_id] = block
+                try_add_block(
+                    block, chain,
+                    votes_received,
+                    blocks_received )
+
+            elif row_type == 'vote':
+                votes_received.add(vote_id)
+
+                if vote_id in blocks_received:
+                    try_add_block(
+                    blocks_received[vote_id],
+                    chain,
+                    votes_received,
+                    blocks_received )
+
+
+            changed = True
+            while changed:
+                changed = False
+                for b in list(blocks_received.values()):
+                    before = len(chain)
+                    try_add_block(b, chain, votes_received, blocks_received)
+                    if len(chain) > before:
+                        changed = True
+                    
+    return chain
+
+
+
+
+def try_add_block(block, chain, votes_received, blocks_received):
+    block_id = block['id']
+    view = block['view']
+
+
+    if block_id not in votes_received:
+        return
+
+    if view == 0 and len(chain) == 0:
+        chain.append(block)
+        blocks_received.pop(block_id)
+        return
+
+    if chain and chain[-1]['view'] == view - 1:
+        chain.append(block)
+        blocks_received.pop(block_id)
+        return
+
+
+if __name__ == "__main__":
+    filename = input("Enter csv file name: ")
+    chain = build_chain(filename)
+
+    print("Chain:")
+    for block in chain:
+        print(block)
