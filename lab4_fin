@@ -1,0 +1,70 @@
+import sqlite3
+
+
+class Block:
+    def __init__(self, id, view, desc, img):
+        self.id = id
+        self.view = view
+        self.desc = desc
+        self.img = img
+
+    @staticmethod
+    def get_all(conn):
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM BLOCKS")
+        return cur.fetchall()
+
+
+class Person:
+    def __init__(self, id, name, addr):
+        self.id = id
+        self.name = name
+        self.addr = addr
+
+    @staticmethod
+    def get_all(conn):
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM PERSONS")
+        return cur.fetchall()
+
+
+
+class Source:
+    def __init__(self, id, ip_addr, country_code):
+        self.id = id
+        self.ip_addr = ip_addr
+        self.country_code = country_code
+
+    @staticmethod
+    def get_all(conn):
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM SOURCES")
+        return cur.fetchall()
+
+
+
+class Vote:
+    def __init__(self, block_id, voter_id, timestamp, source_id):
+        self.block_id = block_id
+        self.voter_id = voter_id
+        self.timestamp = timestamp
+        self.source_id = source_id
+
+    @staticmethod
+    def get_all(conn):
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM VOTES")
+        return cur.fetchall()
+
+    
+
+
+conn = sqlite3.connect("lab3.db")
+
+blocks = Block.get_all(conn)
+print("Blocks:", blocks)
+votes = Vote.get_all(conn)
+print("Votes:", votes)
+
+conn.close()
+
