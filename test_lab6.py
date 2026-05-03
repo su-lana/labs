@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from lab6_4based import Block, Person, Source, Vote
+from lab6 import Block, Person, Source, Vote
 
 
 
